@@ -9,21 +9,28 @@
       version = "HEAD";
       src = ./.;
       bazel = pkgs.bazel_6;
-      bazelTarget = "//:hello";
+      bazelTarget = "//src:hello";
+      bazelTestTargets = ["//..."];
+      nativeBuildInputs = [
+        pkgs.jdk11
+      ];
       buildAttrs = {
         installPhase = ''
-          install -Dm755 bazel-bin/hello $out/bin/hello
+          install -Dm755 bazel-bin/src/hello $out/bin/hello
         '';
       };
       fetchAttrs = {
-        sha256 = "sha256-pST4R45mWC5j0ngkkRe+hmostaMploW0+BN3WKPt0t0=";
+        # This is the hash of the output of the fixed output derivation that fetches
+        # the remote resources needed for the Bazel build
+        sha256 = "sha256-/iwPwtJBOboujFZHU5WJJAo7Z3/8l/SbBQWBxUmY+Jw=";
       };
     };
-    packages.default = packages.hello;
+    packages.default = packages.bazel-cxx-hello-world;
     devShells.default = pkgs.mkShell {
       buildInputs = with pkgs; [
         bazel_6
         nixpkgs-fmt
+        jdk11
       ];
     };
   });
